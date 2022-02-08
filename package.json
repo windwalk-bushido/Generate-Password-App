@@ -1,4 +1,8 @@
 {
+	"name": "gen-pass-api",
+	"version": "1.0.0",
+	"description": "https://github.com/windwalk-bushido/Generate-Password-App",
+	"main": "app.js",
 	"scripts": {
 		"serve": "nodemon app.js",
 		"start": "node app.js",
