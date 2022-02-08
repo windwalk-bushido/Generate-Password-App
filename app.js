@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 const BodyParser = require("body-parser");
 let JsonParser = BodyParser.json();
@@ -168,6 +168,4 @@ app.put("/hash", UrlencodedParser, (request, response) => {
 	response.json(generated_hash);
 });
 
-app.listen(port, () => {
-	console.log("Listening at http:localhost:" + port);
-});
+app.listen(port, () => console.log("Listening at http:localhost:" + port));
