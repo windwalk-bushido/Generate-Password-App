@@ -71,9 +71,14 @@ let special_characters = [
 	"\\",
 ];
 
+app.get("/", (request, response) => {
+	response.send("<h1>It works!</h1>");
+});
+
+//0 to max
 function RandomNumber(max) {
 	return Math.floor(Math.random() * max);
-} //0 to max
+}
 
 app.put("/password", UrlencodedParser, (request, response) => {
 	let generate_uppercase_letters = true;
@@ -166,4 +171,3 @@ app.put("/hash", UrlencodedParser, (request, response) => {
 app.listen(port, () => {
 	console.log("Listening at http:localhost:" + port);
 });
-
