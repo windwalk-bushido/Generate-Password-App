@@ -1,7 +1,7 @@
 <template>
-	<div class="flex flex-row flex-wrap justify-center items-start w-screen h-screen">
+	<div class="flex flex-row flex-wrap justify-center items-start w-screen h-screen bg-gray-900">
 		<div
-			class="flex flex-row flex-wrap justify-center items-start w-full p-4 m-4 mb-12 rounded-xl shadow-lg border-2 border-blue-600 bg-blue-900 lg:m-12 lg:p-8 PASS_GEN"
+			class="flex flex-row flex-wrap justify-center items-start w-full p-4 m-4 mb-12 rounded-xl shadow-lg border-2 text-white border-blue-600 bg-blue-900 lg:m-12 lg:p-8 PASS_GEN"
 		>
 			<h3 class="text-2xl mb-8">Password generator</h3>
 			<div class="flex justify-between items-center w-full mt-2 mb-2">
@@ -58,7 +58,7 @@
 		</div>
 
 		<div
-			class="flex flex-row flex-wrap justify-center items-start w-full p-4 m-4 mb-12 rounded-xl shadow-lg border-2 border-blue-600 bg-blue-900 lg:m-12 lg:p-8 PASS_GEN"
+			class="flex flex-row flex-wrap justify-center items-start w-full p-4 m-4 mb-12 rounded-xl shadow-lg border-2 text-white border-blue-600 bg-blue-900 lg:m-12 lg:p-8 PASS_GEN"
 		>
 			<h3 class="text-2xl mb-8">Hash text</h3>
 			<div class="w-full">
@@ -152,15 +152,24 @@
 				let arg4 = { gen_specials: this.switch_specials };
 				let arg5 = { pass_len: this.password_length };
 
-				axios
-					.put("https://generate-password-api.herokuapp.com/password", { arg1, arg2, arg3, arg4, arg5 })
-					.then((response) => {
-						this.password = response["data"];
-						this.textarea_empty = false;
-					})
-					.catch((error) => {
-						alert(error);
-					});
+				if (
+					arg1.gen_uppercase == false &&
+					arg2.gen_lowercase == false &&
+					arg3.gen_numbers == false &&
+					arg4.gen_specials == false
+				) {
+					alert("You must select atleast one option before requesting password...");
+				} else {
+					axios
+						.put("https://generate-password-api.herokuapp.com/password", { arg1, arg2, arg3, arg4, arg5 })
+						.then((response) => {
+							this.password = response["data"];
+							this.textarea_empty = false;
+						})
+						.catch((error) => {
+							alert(error);
+						});
+				}
 			},
 
 			CopyPassword() {
@@ -170,17 +179,26 @@
 			},
 
 			FetchHash() {
-				let arg1 = document.getElementById("text_field").value;
+				let plaintext = document.getElementById("text_field").value;
+				let arg1 = { value: plaintext.toString() };
 
-				axios
-					.put("https://generate-password-api.herokuapp.com/hash", { arg1 })
-					.then((response) => {
-						this.hash = response["data"];
-						this.hash_field_empty = false;
-					})
-					.catch((error) => {
-						alert(error);
-					});
+				if (arg1.value == "") {
+					alert("Empty input sent... type something, then click the button.");
+				} else {
+					axios
+						.put("https://generate-password-api.herokuapp.com/hash", { arg1 })
+						.then((response) => {
+							if (response.data["message"] != null) {
+								alert(response.data["message"]);
+							} else {
+								this.hash = response["data"];
+								this.hash_field_empty = false;
+							}
+						})
+						.catch((error) => {
+							alert(error);
+						});
+				}
 			},
 
 			CopyHash() {

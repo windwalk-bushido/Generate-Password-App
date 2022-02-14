@@ -94,65 +94,69 @@ app.put("/password", UrlencodedParser, (request, response) => {
 	let arg4 = request.body.arg4;
 	let arg5 = request.body.arg5;
 
-	if (arg1["gen_uppercase"] == true) {
-		generate_uppercase_letters = true;
+	if (arg1.gen_uppercase == false && arg2.gen_lowercase == false && arg3.gen_numbers == false && arg3.gen_specials == false) {
+		response.json("You must select atleast one option before requesting password...");
 	} else {
-		generate_uppercase_letters = false;
-	}
-
-	if (arg2["gen_lowercase"] == true) {
-		generate_lowercase_letters = true;
-	} else {
-		generate_lowercase_letters = false;
-	}
-
-	if (arg3["gen_numbers"] == true) {
-		generate_numbers = true;
-	} else {
-		generate_numbers = false;
-	}
-
-	if (arg4["gen_specials"] == true) {
-		generate_special_characters = true;
-	} else {
-		generate_special_characters = false;
-	}
-
-	wanted_password_length = arg5["pass_len"];
-
-	let generate_password = true;
-
-	while (generate_password) {
-		if (password.length <= wanted_password_length) {
-			let array_picker = RandomNumber(4);
-
-			if (array_picker == 0 && generate_uppercase_letters == true) {
-				let lucky_number = RandomNumber(letters.length);
-				password += letters[lucky_number].toUpperCase();
-			}
-
-			if (array_picker == 1 && generate_lowercase_letters == true) {
-				let lucky_number = RandomNumber(letters.length);
-				password += letters[lucky_number];
-			}
-
-			if (array_picker == 2 && generate_numbers == true) {
-				let lucky_number = RandomNumber(numbers.length);
-				password += numbers[lucky_number];
-			}
-
-			if (array_picker == 3 && generate_special_characters == true) {
-				let lucky_number = RandomNumber(special_characters.length);
-				password += special_characters[lucky_number];
-			}
+		if (arg1["gen_uppercase"] == true) {
+			generate_uppercase_letters = true;
 		} else {
-			generate_password = false;
+			generate_uppercase_letters = false;
 		}
-	}
 
-	response.json(password);
-	password = "";
-	console.log("Password served."); //Log IP and Date of each request into a txt file!
+		if (arg2["gen_lowercase"] == true) {
+			generate_lowercase_letters = true;
+		} else {
+			generate_lowercase_letters = false;
+		}
+
+		if (arg3["gen_numbers"] == true) {
+			generate_numbers = true;
+		} else {
+			generate_numbers = false;
+		}
+
+		if (arg4["gen_specials"] == true) {
+			generate_special_characters = true;
+		} else {
+			generate_special_characters = false;
+		}
+
+		wanted_password_length = arg5["pass_len"];
+
+		let generate_password = true;
+
+		while (generate_password) {
+			if (password.length <= wanted_password_length) {
+				let array_picker = RandomNumber(4);
+
+				if (array_picker == 0 && generate_uppercase_letters == true) {
+					let lucky_number = RandomNumber(letters.length);
+					password += letters[lucky_number].toUpperCase();
+				}
+
+				if (array_picker == 1 && generate_lowercase_letters == true) {
+					let lucky_number = RandomNumber(letters.length);
+					password += letters[lucky_number];
+				}
+
+				if (array_picker == 2 && generate_numbers == true) {
+					let lucky_number = RandomNumber(numbers.length);
+					password += numbers[lucky_number];
+				}
+
+				if (array_picker == 3 && generate_special_characters == true) {
+					let lucky_number = RandomNumber(special_characters.length);
+					password += special_characters[lucky_number];
+				}
+			} else {
+				generate_password = false;
+			}
+		}
+
+		response.json(password);
+		password = "";
+		console.log("Password served."); //Log IP and Date of each request into a txt file!
+	}
 });
 
 const { createHash } = require("crypto");
@@ -164,8 +168,17 @@ function CreateHash(input) {
 
 app.put("/hash", UrlencodedParser, (request, response) => {
 	let plaintext = request.body.arg1;
-	let generated_hash = CreateHash(plaintext);
-	response.json(generated_hash);
+	if (plaintext.value == "") {
+		response.json("Empty input sent... type something, then click the button.");
+	} else {
+		let generated_hash = "";
+		try {
+			generated_hash = CreateHash(plaintext.value);
+		} catch (error) {
+			generated_hash = { message: "You need to refresh the page for another plaintext hashing" };
+		}
+		response.json(generated_hash);
+	}
 });
 
 app.listen(port, () => console.log("Listening at http:localhost:" + port));
